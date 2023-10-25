@@ -10,7 +10,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const port = 3017;
+const port = 3019;
 
 const parser = new Parser();
 
@@ -81,7 +81,7 @@ async function analyzeNews() {
                     continue;  // Переходим к следующему элементу
                 }
             }
-            
+
             const updateQuery = "UPDATE news SET rating = ? WHERE id = ?";
             connection.query(updateQuery, [rating, newsItem.id], (err) => {
                 if (err) throw err;
@@ -91,23 +91,22 @@ async function analyzeNews() {
     });
 }
 
-
 async function fetchNewsAndAddToDatabase() {
-
-    RSS.forEach(async (rss) => {
+    for (const rss of RSS) {
         let feed;
         try {
             feed = await parser.parseURL(rss.rss_url);
         } catch (error) {
             console.error('Error fetching the RSS feed:', error, rss);
-            return;
+            continue;  // переход к следующей RSS-ленте
         }
 
         for (const item of feed.items) {
             await addNewsToDatabase(item, rss);
         }
-    });
 
+        await delay(600000);  // Пауза в 10 минут (10 минут * 60 секунд * 1000 миллисекунд)
+    }
 }
 
 // Роут для запуска функции чтения RSS и добавления новостей в базу данных
@@ -127,7 +126,7 @@ app.listen(port, () => {
 
 
 Promise.all([
-    fetchNewsAndAddToDatabase(),
+//    fetchNewsAndAddToDatabase(),
     analyzeNews()
 ]).then(() => {
     console.log('Both functions completed.');
