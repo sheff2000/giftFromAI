@@ -4,13 +4,13 @@ import mysql from 'mysql';
 import { db, RSS } from '../config.js';
 import {getRating} from './gpt.js';
 import Parser from 'rss-parser';
-
+import {getDataFromAllGraph, getDataFromCountryGraph} from './getDatafunc.js';
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-const port = 3019;
+const port = 3027;
 
 const parser = new Parser();
 
@@ -101,6 +101,7 @@ async function fetchNewsAndAddToDatabase() {
             continue;  // переход к следующей RSS-ленте
         }
 
+        console.log('Success parse RSS - ', rss.country);
         for (const item of feed.items) {
             await addNewsToDatabase(item, rss);
         }
@@ -119,6 +120,28 @@ app.get('/news', async (req, res) => {
     }
 });
 
+app.get('/all-graph', async (req, res) => {
+    try {
+        const data = await getDataFromAllGraph(connection);
+        res.json(data);  
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        res.status(500).send('Error fetching the data.');
+    }
+});
+
+app.get('/live-graph/:country', async (req, res) => {
+    const { country } = req.params;
+
+    try {
+        const data = await getDataFromCountryGraph(connection, country);
+        res.json(data);  
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        res.status(500).send('Error fetching the data.');
+    }
+});
+
 // Запуск сервера
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
@@ -126,7 +149,7 @@ app.listen(port, () => {
 
 
 Promise.all([
-//    fetchNewsAndAddToDatabase(),
+    fetchNewsAndAddToDatabase(),
     analyzeNews()
 ]).then(() => {
     console.log('Both functions completed.');
