@@ -2,19 +2,20 @@
 export async function getDataFromAllGraph(connection) {
     return new Promise((resolve, reject) => {
         const query = `
-            SELECT 
-                country, 
-                DATE(date_news) as day_news, 
-                AVG(rating) as avgRait
-            FROM 
-                news
-            WHERE 
-                rating != -1
-            GROUP BY 
-                country, DATE(date_news)
-            ORDER BY 
-                country, DATE(date_news) DESC
-        `;
+        SELECT 
+            country, 
+            DATE(date_news) as day_news, 
+            AVG(rating) as avgRait
+        FROM 
+            news
+        WHERE 
+            rating != -1
+            AND DATE(date_news) >= '2023-10-23'
+        GROUP BY 
+            country, DATE(date_news)
+        ORDER BY 
+            country, DATE(date_news) ASC
+    `;
 
         connection.query(query, (err, results) => {
             if (err) return reject(err);

@@ -1,20 +1,72 @@
+const port = 3029;
 document.addEventListener("DOMContentLoaded", function() {
-    const port = 3027;
+    
     fetch(`http://localhost:${port}/all-graph`)
         .then(response => response.json())
         .then(data => {
            // let newsContainer = document.getElementById('newsContainer');
            
            console.log('DATA GRAPH - ', data);
+
            
-           data.forEach(news => {
-                let newsItem = document.createElement('div');
-                newsItem.textContent = news.title; // Здесь выводим только заголовок, но можно добавить и другую информацию
-                newsContainer.appendChild(newsItem);
+            // Шаг 1: Получить список всех дат
+            let allDates = new Set();
+            data.forEach(countryData => {
+                countryData.ratings.forEach(rating => {
+                    allDates.add(rating.date_news.split('T')[0]);
+                });
             });
+            allDates = [...allDates].sort();
+
+            // Шаг 2: Создать итоговый массив
+            let result = [['Day'].concat(data.map(countryData => countryData.country))];
+
+            allDates.forEach(date => {
+                let row = [date];
+                data.forEach(countryData => {
+                    const ratingForDate = countryData.ratings.find(rating => rating.date_news.split('T')[0] === date);
+                    row.push(ratingForDate ? ratingForDate.avgRait : null);
+                });
+                result.push(row);
+            });
+
+            console.log(result);
+
+
+
+           google.charts.load('current', {'packages':['corechart']});
+           google.charts.setOnLoadCallback(drawChart);
+     
+           function drawChart() {
+             var data = google.visualization.arrayToDataTable(result);
+     
+             var options = {
+               title: 'Sentiment chart in countries | AVG by Day',
+               curveType: 'function',
+               legend: { position: 'bottom' }
+             };
+     
+             var chart = new google.visualization.LineChart(document.getElementById('summary-graph'));
+     
+             chart.draw(data, options);
+           }
+           
         });
 
     const country = "UK"; 
+    getPraphCountry(country);
+
+    document.getElementById('btn-getGraph').addEventListener('click', ()=>{
+
+        const country = document.getElementById('select-country').value;
+        getPraphCountry(country);
+
+    });
+});
+
+
+
+function getPraphCountry(country) {
     fetch(`http://localhost:${port}/live-graph/${country}`)
             .then(response => response.json())
             .then(data => {
@@ -47,4 +99,4 @@ document.addEventListener("DOMContentLoaded", function() {
             .catch(error => {
                 console.error("Error fetching data from server:", error);
             });
-});
+}

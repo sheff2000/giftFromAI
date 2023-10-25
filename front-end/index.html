@@ -17,13 +17,35 @@
         <hr/>
         <div>
             <h3>Общий график настроений</h3>
-            <div class="summary-graph"></div>
+            <div id="summary-graph" style="width: 900px; height: 500px"></div>
         </div>
         <div>
-            <h3>Общий график настроений (real-time)
+            <h3>График настроений конкретной страны (real-time)
                 <small><span class="badge text-bg-success"> 10 </span> - все СУПЕР  |  <span class="badge text-bg-danger"> 0 </span> - все плохо </small>
             </h3>
             <div class="Ua-graph-realtime">
+                <div class="row g-3 align-items-center">
+                    <div class="col-auto">
+                        <label for="inputPassword6" class="col-form-label">Choose Country</label>
+                    </div>
+                    <div class="col-auto">
+                        <select class="form-control" aria-describedby="passwordHelpInline" id="select-country">
+                            <option value="UA" selected>Ukraine</value>
+                            <option value="FR">France</value>
+                            <option value="UK">United Kingdom</value>
+                            <option value="PT">Portugal</value>
+                            <option value="AR">Argentina</value>
+                            <option value="BR">Brazil</value>
+                            <option value="RU">russia</value>
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                      <span id="passwordHelpInline" class="form-text">
+                        <button type="button" class="btn btn-primary" id="btn-getGraph">Get Graph</button>
+                      </span>
+                    </div>
+                </div>
+                <hr/>
                 <div id="chart_div" style="width: 100%; height: 500px;"></div>
             </div>
         </div>
