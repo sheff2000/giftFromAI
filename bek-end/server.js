@@ -10,7 +10,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const port = 3029;
+const port = 3040;
 
 const parser = new Parser();
 
@@ -106,19 +106,10 @@ async function fetchNewsAndAddToDatabase() {
             await addNewsToDatabase(item, rss);
         }
 
-        await delay(600000);  // Пауза в 10 минут (10 минут * 60 секунд * 1000 миллисекунд)
+        await delay(600000);  // Пауза в 10 минут  -- 600000
     }
 }
 
-// Роут для запуска функции чтения RSS и добавления новостей в базу данных
-app.get('/news', async (req, res) => {
-    try {
-        await fetchNewsAndAddToDatabase();
-        res.send('News fetched and added to database.');
-    } catch (error) {
-        res.status(500).send('Error fetching the news.');
-    }
-});
 
 app.get('/all-graph', async (req, res) => {
     try {
@@ -148,11 +139,13 @@ app.listen(port, () => {
 });
 
 
-Promise.all([
-    fetchNewsAndAddToDatabase(),
-    analyzeNews()
-]).then(() => {
-    console.log('Both functions completed.');
-}).catch((error) => {
-    console.error('Error running the functions:', error);
-});
+    Promise.all([
+       // fetchNewsAndAddToDatabase(),
+        analyzeNews()
+    ]).then(() => {
+        console.log('Both functions completed.');
+    }).catch((error) => {
+        console.error('Error running the functions:', error);
+    });
+
+

@@ -1,4 +1,4 @@
-const port = 3029;
+const port = 3040;
 document.addEventListener("DOMContentLoaded", function() {
     
     fetch(`http://localhost:${port}/all-graph`)
@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 });
             });
             allDates = [...allDates].sort();
+            //console.log('All dates - ', allDates);
 
             // Шаг 2: Создать итоговый массив
             let result = [['Day'].concat(data.map(countryData => countryData.country))];

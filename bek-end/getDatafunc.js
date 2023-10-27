@@ -10,7 +10,7 @@ export async function getDataFromAllGraph(connection) {
             news
         WHERE 
             rating != -1
-            AND DATE(date_news) >= '2023-10-23'
+            AND DATE(date_news) >= '2023-10-22'
         GROUP BY 
             country, DATE(date_news)
         ORDER BY 
